@@ -61,6 +61,14 @@ def send_voice(chat_id, file_id):
     r = requests.post(url=url, data=data)
 
 
+def send_media_group(chat_id, files):
+    '''this function sends file to someone'''
+    print(files)
+    url = f'https://api.telegram.org/bot{TOKEN}/sendMediaGroup'
+    data = dict([('chat_id', chat_id), ('media', files)])
+    r = requests.post(url=url, data=data)
+
+
 
 def main():
     while True:
@@ -74,11 +82,12 @@ def main():
                     if last_update_id != curr_update_id:
                         message = curr_update['message']
                         chat_id = message['from']['id']
+                        print(chat_id)
                         message_type = message.keys()
                         if 'text' in message_type:
                             text = message['text']
                             send_message(chat_id, text)
-                        elif 'photo' in message_type:
+                        elif 'photo' in message_type and 'media_group_id' not in message_type:
                             photo_id = message['photo'][0]['file_id']
                             send_photo(chat_id, photo_id)
                         elif 'document' in message_type:
@@ -93,6 +102,10 @@ def main():
                         elif 'voice' in message_type:
                             file_id = message['voice']['file_id']
                             send_video(chat_id, file_id)
+                        elif 'media_group_id' in message_type:
+                            files = [{'type': 'photo', 'media': item['file_id']} for item in message['photo']]
+                            print(files)
+                            send_media_group(chat_id, files)
 
                         last_update_id = curr_update_id
             
