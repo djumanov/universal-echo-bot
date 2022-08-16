@@ -1,6 +1,7 @@
 import requests
+from pprint import pprint
 
-TOKEN = '2052462740:AAF5wRpqoXt2bm2a7JK5PlFPmcDLRGlajr0'
+TOKEN = '2034426518:AAEbRnSzACcFxj2A1UDfxRs5gFuPn4ZyKLs'
 
 def get_last_update() -> dict:
     '''this function returns last update as dictionary from telegram'''
@@ -63,8 +64,9 @@ def send_voice(chat_id, file_id):
 
 def send_media_group(chat_id, files):
     '''this function sends file to someone'''
-    print(files)
+    
     url = f'https://api.telegram.org/bot{TOKEN}/sendMediaGroup'
+    print('sending media group ...')
     data = dict([('chat_id', chat_id), ('media', files)])
     r = requests.post(url=url, data=data)
 
@@ -82,7 +84,6 @@ def main():
                     if last_update_id != curr_update_id:
                         message = curr_update['message']
                         chat_id = message['from']['id']
-                        print(chat_id)
                         message_type = message.keys()
                         if 'text' in message_type:
                             text = message['text']
@@ -101,12 +102,11 @@ def main():
                             send_video(chat_id, file_id)
                         elif 'voice' in message_type:
                             file_id = message['voice']['file_id']
-                            send_video(chat_id, file_id)
+                            send_voice(chat_id, file_id)
                         elif 'media_group_id' in message_type:
-                            files = [{'type': 'photo', 'media': item['file_id']} for item in message['photo']]
-                            print(files)
+                            files = [{'media': item['file_id'], 'type': 'photo'} for item in message['photo']]
                             send_media_group(chat_id, files)
 
                         last_update_id = curr_update_id
-            
+
 main()
