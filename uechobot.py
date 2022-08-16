@@ -37,6 +37,14 @@ def send_document(chat_id, file_id):
     r = requests.post(url=url, data=data)
 
 
+def send_audio(chat_id, file_id):
+    '''this function sends file to someone'''
+    
+    url = f'https://api.telegram.org/bot{TOKEN}/sendAudio'
+    data = dict([('chat_id', chat_id), ('audio', file_id)])
+    r = requests.post(url=url, data=data)
+
+
 
 def main():
     while True:
@@ -59,6 +67,9 @@ def main():
                             send_photo(chat_id, photo_id)
                         elif 'document' in message_type:
                             file_id = message['document']['file_id']
+                            send_document(chat_id, file_id)
+                        elif 'audio' in message_type:
+                            file_id = message['audio']['file_id']
                             send_document(chat_id, file_id)
 
                         last_update_id = curr_update_id
