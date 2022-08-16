@@ -21,6 +21,15 @@ def send_message(chat_id, text):
     r = requests.post(url=url, data=data)
 
 
+def send_photo(chat_id, photo_id):
+    '''this function sends photo to someone'''
+
+    url = f'https://api.telegram.org/bot{TOKEN}/sendPhoto'
+    data = dict([('chat_id', chat_id), ('photo', photo_id)])
+    r = requests.post(url=url, data=data)
+
+
+
 def main():
     while True:
         last_update = get_last_update()
@@ -37,6 +46,9 @@ def main():
                         if 'text' in message_type:
                             text = message['text']
                             send_message(chat_id, text)
+                        elif 'photo' in message_type:
+                            photo_id = message['photo'][0]['file_id']
+                            send_photo(chat_id, photo_id)
                         last_update_id = curr_update_id
             
 main()
