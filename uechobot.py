@@ -45,6 +45,22 @@ def send_audio(chat_id, file_id):
     r = requests.post(url=url, data=data)
 
 
+def send_video(chat_id, file_id):
+    '''this function sends file to someone'''
+    
+    url = f'https://api.telegram.org/bot{TOKEN}/sendVideo'
+    data = dict([('chat_id', chat_id), ('video', file_id)])
+    r = requests.post(url=url, data=data)
+
+
+def send_voice(chat_id, file_id):
+    '''this function sends file to someone'''
+    
+    url = f'https://api.telegram.org/bot{TOKEN}/sendVoice'
+    data = dict([('chat_id', chat_id), ('voice', file_id)])
+    r = requests.post(url=url, data=data)
+
+
 
 def main():
     while True:
@@ -70,7 +86,13 @@ def main():
                             send_document(chat_id, file_id)
                         elif 'audio' in message_type:
                             file_id = message['audio']['file_id']
-                            send_document(chat_id, file_id)
+                            send_audio(chat_id, file_id)
+                        elif 'video' in message_type:
+                            file_id = message['video']['file_id']
+                            send_video(chat_id, file_id)
+                        elif 'voice' in message_type:
+                            file_id = message['voice']['file_id']
+                            send_video(chat_id, file_id)
 
                         last_update_id = curr_update_id
             
