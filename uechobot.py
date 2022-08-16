@@ -12,3 +12,31 @@ def get_last_update() -> dict:
         return last_update
     return False
 
+
+def send_message(chat_id, text):
+    '''this function sends message to someone'''
+
+    url = f'https://api.telegram.org/bot{TOKEN}/sendMessage'
+    data = dict([('chat_id', chat_id), ('text', text)])
+    r = requests.post(url=url, data=data)
+
+
+def main():
+    while True:
+        last_update = get_last_update()
+        if last_update:
+            last_update_id = last_update['update_id']
+            while True:
+                curr_update = get_last_update()
+                if curr_update:
+                    curr_update_id = curr_update['update_id']
+                    if last_update_id != curr_update_id:
+                        message = curr_update['message']
+                        chat_id = message['from']['id']
+                        message_type = message.keys()
+                        if 'text' in message_type:
+                            text = message['text']
+                            send_message(chat_id, text)
+                        last_update_id = curr_update_id
+            
+main()
