@@ -1,7 +1,7 @@
 import requests
 from pprint import pprint
 
-TOKEN = '2034426518:AAEbRnSzACcFxj2A1UDfxRs5gFuPn4ZyKLs'
+TOKEN = '2034496504:AAFIqwOCqLq9aGlsguPaAq-W8eywOdEGOjA'
 
 def get_last_update() -> dict:
     '''this function returns last update as dictionary from telegram'''
@@ -70,6 +70,14 @@ def send_location(chat_id, latitude, longitude):
     r = requests.post(url=url, data=data)
 
 
+def send_contact(chat_id, phone_number, first_name):
+    '''this function sends file to someone'''
+    
+    url = f'https://api.telegram.org/bot{TOKEN}/sendContact'
+    data = dict([('chat_id', chat_id), ('phone_number', phone_number), ('first_name', first_name)])
+    r = requests.post(url=url, data=data)
+
+
 
 def send_media_group(chat_id, files):
     '''this function sends file to someone'''
@@ -116,6 +124,11 @@ def main():
                             x = message['location']['longitude']
                             y = message['location']['latitude']
                             send_location(chat_id, y, x)
+                        elif 'contact' in message_type:
+                            phone_number = message['contact']['phone_number']
+                            first_name   = message['contact']['first_name']
+                            print(phone_number)
+                            send_contact(chat_id, phone_number, first_name)
                         elif 'media_group_id' in message_type:
                             files = [{'media': item['file_id'], 'type': 'photo'} for item in message['photo']]
                             send_media_group(chat_id, files)
