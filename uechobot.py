@@ -62,6 +62,15 @@ def send_voice(chat_id, file_id):
     r = requests.post(url=url, data=data)
 
 
+def send_location(chat_id, latitude, longitude):
+    '''this function sends file to someone'''
+    
+    url = f'https://api.telegram.org/bot{TOKEN}/sendLocation'
+    data = dict([('chat_id', chat_id), ('latitude', latitude), ('longitude', longitude)])
+    r = requests.post(url=url, data=data)
+
+
+
 def send_media_group(chat_id, files):
     '''this function sends file to someone'''
     
@@ -103,6 +112,10 @@ def main():
                         elif 'voice' in message_type:
                             file_id = message['voice']['file_id']
                             send_voice(chat_id, file_id)
+                        elif 'location' in message_type:
+                            x = message['location']['longitude']
+                            y = message['location']['latitude']
+                            send_location(chat_id, y, x)
                         elif 'media_group_id' in message_type:
                             files = [{'media': item['file_id'], 'type': 'photo'} for item in message['photo']]
                             send_media_group(chat_id, files)
