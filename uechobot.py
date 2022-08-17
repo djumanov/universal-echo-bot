@@ -1,4 +1,5 @@
 import requests
+import json
 from pprint import pprint
 
 TOKEN = '2034496504:AAFIqwOCqLq9aGlsguPaAq-W8eywOdEGOjA'
@@ -39,7 +40,7 @@ def send_document(chat_id, file_id):
 
 
 def send_audio(chat_id, file_id):
-    '''this function sends file to someone'''
+    '''this function sends audio to someone'''
     
     url = f'https://api.telegram.org/bot{TOKEN}/sendAudio'
     data = dict([('chat_id', chat_id), ('audio', file_id)])
@@ -47,7 +48,7 @@ def send_audio(chat_id, file_id):
 
 
 def send_video(chat_id, file_id):
-    '''this function sends file to someone'''
+    '''this function sends video to someone'''
     
     url = f'https://api.telegram.org/bot{TOKEN}/sendVideo'
     data = dict([('chat_id', chat_id), ('video', file_id)])
@@ -55,7 +56,7 @@ def send_video(chat_id, file_id):
 
 
 def send_voice(chat_id, file_id):
-    '''this function sends file to someone'''
+    '''this function sends voice to someone'''
     
     url = f'https://api.telegram.org/bot{TOKEN}/sendVoice'
     data = dict([('chat_id', chat_id), ('voice', file_id)])
@@ -63,7 +64,7 @@ def send_voice(chat_id, file_id):
 
 
 def send_location(chat_id, latitude, longitude):
-    '''this function sends file to someone'''
+    '''this function sends location to someone'''
     
     url = f'https://api.telegram.org/bot{TOKEN}/sendLocation'
     data = dict([('chat_id', chat_id), ('latitude', latitude), ('longitude', longitude)])
@@ -71,7 +72,7 @@ def send_location(chat_id, latitude, longitude):
 
 
 def send_contact(chat_id, phone_number, first_name):
-    '''this function sends file to someone'''
+    '''this function sends contact to someone'''
     
     url = f'https://api.telegram.org/bot{TOKEN}/sendContact'
     data = dict([('chat_id', chat_id), ('phone_number', phone_number), ('first_name', first_name)])
@@ -79,10 +80,18 @@ def send_contact(chat_id, phone_number, first_name):
 
 
 def send_dice(chat_id, emoji):
-    '''this function sends file to someone'''     
+    '''this function sends dice to someone'''     
     
     url = f'https://api.telegram.org/bot{TOKEN}/sendDice'
     data = dict([('chat_id', chat_id), ('emoji', emoji)])
+    r = requests.post(url=url, data=data)
+
+
+def send_poll(chat_id, question, options):
+    '''this function sends poll to someone'''  
+    
+    url = f'https://api.telegram.org/bot{TOKEN}/sendPoll'
+    data = dict([('chat_id', chat_id), ('question', question), ('options', json.dumps(options))])
     r = requests.post(url=url, data=data)
 
 
@@ -91,8 +100,7 @@ def send_media_group(chat_id, files):
     '''this function sends file to someone'''
     
     url = f'https://api.telegram.org/bot{TOKEN}/sendMediaGroup'
-    print('sending media group ...')
-    data = dict([('chat_id', chat_id), ('media', files)])
+    data = dict([('chat_id', chat_id), ('media', json.dumps(files))])
     r = requests.post(url=url, data=data)
 
 
@@ -139,6 +147,10 @@ def main():
                         elif 'dice' in message_type:
                             emoji = message['dice']['emoji']
                             send_dice(chat_id, emoji)
+                        elif 'poll' in message_type:
+                            question = message['poll']['question']
+                            options = [item['text'] for item in message['poll']['options']]
+                            send_poll(chat_id, question, options)
                         elif 'media_group_id' in message_type:
                             files = [{'media': item['file_id'], 'type': 'photo'} for item in message['photo']]
                             send_media_group(chat_id, files)
