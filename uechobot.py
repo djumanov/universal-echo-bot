@@ -78,6 +78,14 @@ def send_contact(chat_id, phone_number, first_name):
     r = requests.post(url=url, data=data)
 
 
+def send_dice(chat_id, emoji):
+    '''this function sends file to someone'''     
+    
+    url = f'https://api.telegram.org/bot{TOKEN}/sendDice'
+    data = dict([('chat_id', chat_id), ('emoji', emoji)])
+    r = requests.post(url=url, data=data)
+
+
 
 def send_media_group(chat_id, files):
     '''this function sends file to someone'''
@@ -127,8 +135,10 @@ def main():
                         elif 'contact' in message_type:
                             phone_number = message['contact']['phone_number']
                             first_name   = message['contact']['first_name']
-                            print(phone_number)
                             send_contact(chat_id, phone_number, first_name)
+                        elif 'dice' in message_type:
+                            emoji = message['dice']['emoji']
+                            send_dice(chat_id, emoji)
                         elif 'media_group_id' in message_type:
                             files = [{'media': item['file_id'], 'type': 'photo'} for item in message['photo']]
                             send_media_group(chat_id, files)
