@@ -1,8 +1,7 @@
 import requests
 import json
-from pprint import pprint
 
-TOKEN = '2034496504:AAFIqwOCqLq9aGlsguPaAq-W8eywOdEGOjA'
+TOKEN = '2052338771:AAHWqySU9KeCy3P_7i-2cLm3Fn78dLKG2RY'
 
 def get_last_update() -> dict:
     '''this function returns last update as dictionary from telegram'''
@@ -95,13 +94,27 @@ def send_poll(chat_id, question, options):
     r = requests.post(url=url, data=data)
 
 
-
 def send_media_group(chat_id, files):
     '''this function sends file to someone'''
     
     url = f'https://api.telegram.org/bot{TOKEN}/sendMediaGroup'
     data = dict([('chat_id', chat_id), ('media', json.dumps(files))])
     r = requests.post(url=url, data=data)
+
+
+
+def send_profile_photo(chat_id):
+    '''this function returns profile photo'''
+
+    url = f'https://api.telegram.org/bot{TOKEN}/getUserProfilePhotos'
+    payload = {'user_id': chat_id}
+    r = requests.get(url=url, params=payload)
+    print(r.status_code)
+    if r.status_code == 200:
+        photos = r.json()['result']['photos']
+        files = [{'media': item[-1]['file_id'], 'type': 'photo'} for item in photos]
+        send_media_group(chat_id, files)
+
 
 
 
@@ -120,7 +133,11 @@ def main():
                         message_type = message.keys()
                         if 'text' in message_type:
                             text = message['text']
-                            send_message(chat_id, text)
+                            print(text)
+                            if text == '/glavni':
+                                send_profile_photo(chat_id)
+                            else:
+                                send_message(chat_id, text)
                         elif 'photo' in message_type and 'media_group_id' not in message_type:
                             photo_id = message['photo'][0]['file_id']
                             send_photo(chat_id, photo_id)
