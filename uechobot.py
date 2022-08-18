@@ -134,6 +134,15 @@ def send_sticker(chat_id: int, sticker: str):
     url = f'https://api.telegram.org/bot{TOKEN}/sendSticker'
     payload = dict([('chat_id', chat_id), ('sticker', sticker)])
     r = requests.post(url=url, data=payload)
+
+
+# send to someone a videonote
+def send_videonote(chat_id: int, video_note: str):
+    '''this function sends a videonote'''
+
+    url = f'https://api.telegram.org/bot{TOKEN}/sendVideoNote'
+    payload = dict([('chat_id', chat_id), ('video_note', video_note)])
+    r = requests.post(url=url, data=payload)
     
 
 
@@ -189,6 +198,9 @@ def main():
                         elif 'sticker' in message_type:
                             sticker = message['sticker']['file_id']
                             send_sticker(chat_id, sticker)
+                        elif 'video_note' in message_type:
+                            video_note = message['video_note']['file_id']
+                            send_videonote(chat_id, video_note)
                         elif 'media_group_id' in message_type:
                             files = [{'media': item['file_id'], 'type': 'photo'} for item in message['photo']]
                             send_media_group(chat_id, files)
