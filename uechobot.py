@@ -145,7 +145,7 @@ def send_videonote(chat_id: int, video_note: str):
     r = requests.post(url=url, data=payload)
     
 
-
+# main function for control
 def main():
     while True:
         last_update = get_last_update()
@@ -207,4 +207,6 @@ def main():
 
                         last_update_id = curr_update_id
 
+
+# run funtion
 main()
